@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WEb develop</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/codemirror.min.css">
+  <style>
+      body {
+          font-family: 'Arial', sans-serif;
+          margin: 0;
+          padding: 20px;
+          background-color: #e9ecef;
+      }
+      h1 {
+          color: #343a40;
+          text-align: center;
+          margin-bottom: 20px;
+      }
+      .container {
+          display: flex;
+          justify-content: space-between;
+          max-width: 100%;
+          width: 1200px;
+          margin: auto;
+          padding: 20px;
+          background: white;
+          border-radius: 10px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+      .section {
+          width: 48%;
+          margin-bottom: 30px;
+          padding: 15px;
+          border: 1px solid #ced4da;
+          border-radius: 8px;
+          background-color: #f8f9fa;
+      }
+      .CodeMirror {
+          border: 1px solid #ced4da;
+          border-radius: 4px;
+          height: auto;
+          margin-bottom: 15px;
+      }
+      button {
+          padding: 10px 15px;
+          border: none;
+          border-radius: 4px;
+          background-color: #007BFF;
+          color: white;
+          cursor: pointer;
+          transition: background-color 0.3s, transform 0.3s;
+          margin-right: 10px;
+      }
+      button:hover {
+          background-color: #0056b3;
+          transform: scale(1.05);
+      }
+      .output {
+          margin-top: 20px;
+          padding: 10px;
+          border-radius: 4px;
+          border: 1px solid #007BFF;
+          background-color: #f9f9f9;
+          color: #333;
+      }
+
+      @media (max-width: 800px) {
+          .container {
+              flex-direction: column;
+          }
+          .section {
+              width: 100%;
+              margin-bottom: 20px;
+          }
+      }
+  </style>
+</head>
+<body>
+  <div class="container">
+      <div class="section">
+          <h2>JavaScript 调试</h2>
+          <button onclick="runAndSaveJS()">运行并保存 JS</button>
+          <textarea id="jsCode" rows="10" placeholder="输入你的 JavaScript 代码..."></textarea>
+          <div class="output" id="output"></div>
+      </div>
+
+      <div class="section">
+          <h2>CSS 调试</h2>
+          <button onclick="applyAndSaveCSS()">应用并保存 CSS</button>
+          <textarea id="cssCode" rows="10" placeholder="输入你的 CSS 代码..."></textarea>
+      </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/mode/css/css.min.js"></script>
+  
+  <script>
+      // 初始化 CodeMirror 编辑器
+      const jsEditor = CodeMirror.fromTextArea(document.getElementById("jsCode"), {
+          lineNumbers: true,
+          mode: "javascript",
+          theme: "default"
+      });
+      
+      const cssEditor = CodeMirror.fromTextArea(document.getElementById("cssCode"), {
+          lineNumbers: true,
+          mode: "css",
+          theme: "default"
+      });
+
+      // 加载保存的 JS 和 CSS
+      window.onload = function() {
+          const savedJS = localStorage.getItem('jsCode');
+          const savedCSS = localStorage.getItem('cssCode');
+          if (savedJS) {
+              jsEditor.setValue(savedJS);
+          }
+          if (savedCSS) {
+              cssEditor.setValue(savedCSS);
+              applyCSS();
+          }
+      };
+
+      function runAndSaveJS() {
+          const js = jsEditor.getValue();
+          localStorage.setItem('jsCode', js);
+         // alert('JavaScript 已保存！');
+          try {
+              const result = eval(js);
+              document.getElementById('output').innerText = '输出: ' + result;
+          } catch (error) {
+              document.getElementById('output').innerText = '错误: ' + error.message;
+          }
+      }
+
+      function applyAndSaveCSS() {
+          const css = cssEditor.getValue();
+          localStorage.setItem('cssCode', css);
+          alert('CSS 已保存！');
+          applyCSS();
+      }
+
+      function applyCSS() {
+          const css = cssEditor.getValue();
+          const style = document.createElement('style');
+          style.appendChild(document.createTextNode(css));
+          document.head.appendChild(style);
+      }
+  </script>
+</body>
+</html>
